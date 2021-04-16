@@ -5,10 +5,10 @@ function createFakeUserList() {
   return [
     {
       userId: '1',
-      username: 'vben',
-      realName: 'Vben Admin',
-      desc: 'manager',
-      password: '123456',
+      username: 'admin',
+      realName: 'Admin',
+      desc: 'admin',
+      password: 'admin',
       token: 'fakeToken1',
       roles: [
         {

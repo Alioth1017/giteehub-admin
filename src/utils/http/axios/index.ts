@@ -32,26 +32,26 @@ const transform: AxiosTransform = {
   /**
    * @description: 处理请求数据
    */
-  transformRequestHook: (res: AxiosResponse<Result>, options: RequestOptions) => {
+  transformRequestHook: (response: AxiosResponse<Result>, options: RequestOptions) => {
     const { t } = useI18n();
     const { isTransformRequestResult } = options;
     // 不进行任何处理，直接返回
     // 用于页面代码可能需要直接获取code，data，message这些信息时开启
     if (!isTransformRequestResult) {
-      return res.data;
+      return response.data;
     }
     // 错误的时候返回
 
-    const { data } = res;
-    if (!data) {
+    const { data: res } = response;
+    if (!res) {
       // return '[HTTP] Request has no return value';
       return errorResult;
     }
-    //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-    const { code, result, message } = data;
+    //  这里 code，data，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
+    const { code, data, message } = res;
 
     // 这里逻辑可以根据项目进行修改
-    const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
+    const hasSuccess = res && Reflect.has(res, 'code') && code === ResultEnum.SUCCESS;
     if (!hasSuccess) {
       if (message) {
         // errorMessageMode=‘modal’的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
@@ -67,12 +67,12 @@ const transform: AxiosTransform = {
 
     // 接口请求成功，直接返回结果
     if (code === ResultEnum.SUCCESS) {
-      return result;
+      return data;
     }
     // 接口请求错误，统一提示错误信息
     if (code === ResultEnum.ERROR) {
       if (message) {
-        createMessage.error(data.message);
+        createMessage.error(res.message);
         Promise.reject(new Error(message));
       } else {
         const msg = t('sys.api.errorMessage');
@@ -140,7 +140,7 @@ const transform: AxiosTransform = {
     const token = getToken();
     if (token) {
       // jwt token
-      config.headers.Authorization = token;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },

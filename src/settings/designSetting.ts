@@ -1,6 +1,6 @@
 import { ThemeEnum } from '../enums/appEnum';
 export default {
-  prefixCls: 'vben',
+  prefixCls: 'giteehub',
 };
 
 export const darkMode = ThemeEnum.LIGHT;

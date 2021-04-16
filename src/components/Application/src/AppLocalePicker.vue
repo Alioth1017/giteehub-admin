@@ -1,5 +1,5 @@
 <!--
- * @Author: Vben
+ * @Author: Alioth
  * @Description: Multi-language switching component
 -->
 <template>
@@ -11,7 +11,7 @@
     @menuEvent="handleMenuEvent"
     overlayClassName="app-locale-picker-overlay"
   >
-    <span class="cursor-pointer flex items-center">
+    <span class="flex items-center cursor-pointer">
       <Icon icon="ion:language" />
       <span v-if="showText" class="ml-1">{{ getLangText }}</span>
     </span>
