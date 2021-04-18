@@ -14,7 +14,10 @@ import { defHttp } from '/@/utils/http/axios';
 
 enum Api {
   AccountList = '/system/getAccountList',
-  DeptList = '/system/getDeptList',
+  DeptList = '/admin/base/sys/department/list',
+  DeptAdd = '/admin/base/sys/department/add',
+  DeptUpdate = '/admin/base/sys/department/update',
+  DeptDelete = '/admin/base/sys/department/delete',
   MenuList = '/system/getMenuList',
   RolePageList = '/system/getRoleListByPage',
   GetAllRoleList = '/system/getAllRoleList',
@@ -24,7 +27,16 @@ export const getAccountList = (params: AccountParams) =>
   defHttp.get<AccountListGetResultModel>({ url: Api.AccountList, params });
 
 export const getDeptList = (params?: DeptListItem) =>
-  defHttp.get<DeptListGetResultModel>({ url: Api.DeptList, params });
+  defHttp.post<DeptListGetResultModel>({ url: Api.DeptList, params });
+
+export const DeptAdd = (params?: DeptListItem) =>
+  defHttp.post<DeptListItem>({ url: Api.DeptAdd, params });
+
+export const DeptUpdate = (params?: DeptListItem) =>
+  defHttp.post<DeptListItem>({ url: Api.DeptUpdate, params });
+
+export const DeptDelete = (params: any) =>
+  defHttp.post<DeptListItem>({ url: Api.DeptDelete, params });
 
 export const getMenuList = (params?: MenuParams) =>
   defHttp.get<MenuListGetResultModel>({ url: Api.MenuList, params });

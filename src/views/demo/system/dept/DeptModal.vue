@@ -5,17 +5,19 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, computed, unref } from 'vue';
+  import { deepTree } from '/@/utils/helper/treeHelper';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { formSchema } from './dept.data';
 
-  import { getDeptList } from '/@/api/demo/system';
+  import { getDeptList, DeptAdd, DeptUpdate } from '/@/api/demo/system';
   export default defineComponent({
     name: 'DeptModal',
     components: { BasicModal, BasicForm },
     emits: ['success', 'register'],
     setup(_, { emit }) {
       const isUpdate = ref(true);
+      let depData: any = null;
 
       const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
         labelWidth: 100,
@@ -33,9 +35,10 @@
             ...data.record,
           });
         }
-        const treeData = await getDeptList();
+        depData = data.record;
+        const treeData = deepTree((await getDeptList()) as any[]);
         updateSchema({
-          field: 'parentDept',
+          field: 'parentId',
           componentProps: { treeData },
         });
       });
@@ -47,7 +50,12 @@
           const values = await validate();
           setModalProps({ confirmLoading: true });
           // TODO custom api
-          console.log(values);
+          if (depData && depData.id) {
+            await DeptUpdate({ ...depData, ...values });
+          } else {
+            await DeptAdd(values);
+          }
+          console.log({ ...depData, ...values });
           closeModal();
           emit('success');
         } finally {

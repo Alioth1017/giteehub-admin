@@ -184,3 +184,45 @@ export function treeMapEach(
     };
   }
 }
+
+export function orderBy(list: Array<any>, key: any) {
+  return list.sort((a, b) => a[key] - b[key]);
+}
+export function deepTree(
+  list: Array<any>,
+  options = {
+    id: 'id',
+    parentId: 'parentId',
+    children: 'children',
+    orderBy: 'orderNum',
+  }
+) {
+  const newList: Array<any> = [];
+  const map: any = {};
+
+  list.forEach((e) => (map[e[options.id]] = e));
+
+  list.forEach((e) => {
+    const parent = map[e[options.parentId]];
+
+    if (parent) {
+      (parent[options.children] || (parent[options.children] = [])).push(e);
+    } else {
+      newList.push(e);
+    }
+  });
+
+  const fn = (list: Array<any>) => {
+    list.map((e) => {
+      if (e[options.children] instanceof Array) {
+        e[options.children] = orderBy(e[options.children], options.orderBy);
+
+        fn(e[options.children]);
+      }
+    });
+  };
+
+  fn(newList);
+
+  return orderBy(newList, options.orderBy);
+}

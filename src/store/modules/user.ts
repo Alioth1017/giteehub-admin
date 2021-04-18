@@ -9,7 +9,7 @@ import { PageEnum } from '/@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
-import { CaptchaParams, GetUserInfoByUserIdModel, LoginParams } from '/@/api/sys/model/userModel';
+import { CaptchaParams, LoginParams } from '/@/api/sys/model/userModel';
 
 import { captchaApi, getUserInfoById, loginApi } from '/@/api/sys/user';
 
@@ -78,7 +78,7 @@ export const useUserStore = defineStore({
         goHome?: boolean;
         mode?: ErrorMessageMode;
       }
-    ): Promise<GetUserInfoByUserIdModel | null> {
+    ): Promise<UserInfo | null> {
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
@@ -96,15 +96,16 @@ export const useUserStore = defineStore({
       }
     },
     async getUserInfoAction() {
-      const userInfo = await getUserInfoById();
-      const { roles } = userInfo;
+      const d = await getUserInfoById();
+      const userInfo = {
+        userId: d.id,
+        username: d.username,
+        realName: d.name,
+        desc: d.remark,
+      } as UserInfo;
+      const { roles } = d;
       const roleList = roles?.map((item) => item.value) as RoleEnum[];
-      this.setUserInfo({
-        userId: userInfo.id,
-        username: userInfo.username,
-        realName: userInfo.name,
-        desc: userInfo.remark,
-      });
+      this.setUserInfo(userInfo);
       this.setRoleList(roleList || []);
       return userInfo;
     },

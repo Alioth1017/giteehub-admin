@@ -6,6 +6,7 @@ import { cloneDeep } from 'lodash-es';
 import { warn } from '/@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { isEmpty } from '/@/utils/is';
+import { deepTree } from '/@/utils/helper/treeHelper';
 
 export type LayoutMapKey = 'LAYOUT';
 
@@ -200,36 +201,3 @@ export const revisePath = (path: string) => {
     return `/${path}`;
   }
 };
-export function orderBy(list: Array<any>, key: any) {
-  return list.sort((a, b) => a[key] - b[key]);
-}
-export function deepTree(list: Array<any>) {
-  const newList: Array<any> = [];
-  const map: any = {};
-
-  list.forEach((e) => (map[e.id] = e));
-
-  list.forEach((e) => {
-    const parent = map[e.parentId];
-
-    if (parent) {
-      (parent.children || (parent.children = [])).push(e);
-    } else {
-      newList.push(e);
-    }
-  });
-
-  const fn = (list: Array<any>) => {
-    list.map((e) => {
-      if (e.children instanceof Array) {
-        e.children = orderBy(e.children, 'orderNum');
-
-        fn(e.children);
-      }
-    });
-  };
-
-  fn(newList);
-
-  return orderBy(newList, 'orderNum');
-}

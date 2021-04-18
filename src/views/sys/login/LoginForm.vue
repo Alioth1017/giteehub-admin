@@ -140,7 +140,7 @@
       const rememberMe = ref(false);
 
       const formData = reactive({
-        account: 'admin',
+        account: 'test',
         password: '123456',
         captchaId: '',
         verifyCode: '',

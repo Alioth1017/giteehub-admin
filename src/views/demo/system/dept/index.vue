@@ -30,9 +30,9 @@
   import { defineComponent } from 'vue';
 
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
-  import { getDeptList } from '/@/api/demo/system';
-
+  import { getDeptList, DeptDelete } from '/@/api/demo/system';
   import { useModal } from '/@/components/Modal';
+  import { deepTree } from '/@/utils/helper/treeHelper';
   import DeptModal from './DeptModal.vue';
 
   import { columns, searchFormSchema } from './dept.data';
@@ -45,14 +45,17 @@
       const [registerTable, { reload }] = useTable({
         title: '部门列表',
         api: getDeptList,
+        afterFetch: (d) => {
+          return deepTree(d);
+        },
         columns,
+        // useSearchForm: true,
         formConfig: {
           labelWidth: 120,
           schemas: searchFormSchema,
         },
         pagination: false,
         striped: false,
-        useSearchForm: true,
         showTableSetting: true,
         bordered: true,
         showIndexColumn: false,
@@ -79,8 +82,9 @@
         });
       }
 
-      function handleDelete(record: Recordable) {
-        console.log(record);
+      async function handleDelete(record: Recordable) {
+        await DeptDelete({ ids: [record.id], deleteUser: false });
+        reload();
       }
 
       function handleSuccess() {
