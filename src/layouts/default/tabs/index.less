@@ -8,13 +8,20 @@ html[data-theme='dark'] {
   }
 }
 
+html[data-theme='light'] {
+  .@{prefix-cls} {
+    .ant-tabs-tab:not(.ant-tabs-tab-active) {
+      border: 1px solid #d9d9d9 !important;
+    }
+  }
+}
+
 .@{prefix-cls} {
   z-index: 10;
   height: @multiple-height + 2;
   line-height: @multiple-height + 2;
-  background: @component-background;
+  background-color: @component-background;
   border-bottom: 1px solid @border-color-base;
-  box-shadow: 0 1px 2px 0 rgba(29, 35, 41, 0.05);
 
   .ant-tabs-small {
     height: @multiple-height;
@@ -24,7 +31,7 @@ html[data-theme='dark'] {
     .ant-tabs-card-bar {
       height: @multiple-height;
       margin: 0;
-      background: @component-background;
+      background-color: @component-background;
       border: 0;
       box-shadow: none;
 
@@ -38,7 +45,7 @@ html[data-theme='dark'] {
         padding-right: 12px;
         line-height: calc(@multiple-height - 2px);
         color: @text-color-base;
-        background: @component-background;
+        background-color: @component-background;
         transition: none;
 
         &:hover {

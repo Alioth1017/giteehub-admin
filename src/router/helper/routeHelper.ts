@@ -1,10 +1,11 @@
-import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
+import type { AppRouteModule, AppRouteRecordRaw, MenuItem } from '/@/router/types';
 import type { Router, RouteRecordNormalized } from 'vue-router';
 
 import { getParentLayout, LAYOUT } from '/@/router/constant';
 import { cloneDeep } from 'lodash-es';
 import { warn } from '/@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
+import { isEmpty } from '/@/utils/is';
 
 export type LayoutMapKey = 'LAYOUT';
 
@@ -145,4 +146,90 @@ function isMultipleRoute(routeModule: AppRouteModule) {
     }
   }
   return flag;
+}
+
+// 将菜单转化成树
+export function transformPermMenu(menus: MenuItem[]): AppRouteRecordRaw[] {
+  const routes = menus
+    .filter((e: MenuItem) => e.type !== 2)
+    .map((e: MenuItem) => {
+      return {
+        id: e.id,
+        parentId: e.parentId,
+        path: revisePath(e.router || String(e.id)),
+        name: e.name,
+        component: e.type === 0 ? 'LAYOUT' : e.viewPath,
+        type: e.type,
+        orderNo: e.orderNum,
+        meta: {
+          title: e.name,
+          icon: e.icon,
+          hideMenu: !(isEmpty(e.isShow) ? true : e.isShow),
+        },
+        children: [],
+      } as AppRouteRecordRaw;
+      // return {
+      //   id: e.id,
+      //   parentId: e.parentId,
+      //   path: revisePath(e.router || String(e.id)),
+      //   viewPath: e.viewPath,
+      //   type: e.type,
+      //   name: e.name,
+      //   icon: e.icon,
+      //   orderNum: e.orderNum,
+      //   isShow: isEmpty(e.isShow) ? true : e.isShow,
+      //   meta: {
+      //     label: e.name,
+      //     keepAlive: e.keepAlive,
+      //   },
+      //   children: [],
+      // };
+    });
+  // 转成树形菜单
+  const menuGroup = deepTree(routes);
+  return menuGroup;
+}
+export const revisePath = (path: string) => {
+  if (!path) {
+    return '';
+  }
+
+  if (path[0] == '/') {
+    return path;
+  } else {
+    return `/${path}`;
+  }
+};
+export function orderBy(list: Array<any>, key: any) {
+  return list.sort((a, b) => a[key] - b[key]);
+}
+export function deepTree(list: Array<any>) {
+  const newList: Array<any> = [];
+  const map: any = {};
+
+  list.forEach((e) => (map[e.id] = e));
+
+  list.forEach((e) => {
+    const parent = map[e.parentId];
+
+    if (parent) {
+      (parent.children || (parent.children = [])).push(e);
+    } else {
+      newList.push(e);
+    }
+  });
+
+  const fn = (list: Array<any>) => {
+    list.map((e) => {
+      if (e.children instanceof Array) {
+        e.children = orderBy(e.children, 'orderNum');
+
+        fn(e.children);
+      }
+    });
+  };
+
+  fn(newList);
+
+  return orderBy(newList, 'orderNum');
 }

@@ -22,9 +22,10 @@ export interface RoleInfo {
  * @description: Login interface return value
  */
 export interface LoginResultModel {
-  userId: string | number;
+  expire: number;
+  refreshExpire: number;
   token: string;
-  role: RoleInfo;
+  refreshToken: string;
 }
 
 /**
@@ -41,5 +42,22 @@ export interface GetUserInfoByUserIdModel {
   // realName: string;
   name: string;
   // 介绍
-  desc?: string;
+  remark?: string;
+}
+
+/**
+ * @description: Captcha interface parameters
+ */
+export interface CaptchaParams {
+  height: number;
+  width: number;
+  background: string;
+}
+
+/**
+ * @description: Captcha interface return value
+ */
+export interface CaptchaResultModel {
+  captchaId: string;
+  data: string;
 }

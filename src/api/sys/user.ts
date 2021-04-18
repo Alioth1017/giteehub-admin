@@ -4,16 +4,27 @@ import {
   LoginResultModel,
   GetUserInfoByUserIdParams,
   GetUserInfoByUserIdModel,
+  CaptchaParams,
+  CaptchaResultModel,
 } from './model/userModel';
 
 import { ErrorMessageMode } from '/@/utils/http/axios/types';
 
 enum Api {
-  // Login = '/login',
-  Login = '/auth/login',
-  // GetUserInfoById = '/getUserInfoById',
-  GetUserInfoById = '/auth/currentUser',
-  GetPermCodeByUserId = '/getPermCodeByUserId',
+  Captcha = '/admin/base/open/captcha',
+  Login = '/admin/base/open/login',
+  GetUserInfoById = '/admin/base/comm/person',
+  GetPermCodeByUserId = '/admin/base/comm/permmenu',
+}
+
+/**
+ * @description: captcha api
+ */
+export function captchaApi(params: CaptchaParams) {
+  return defHttp.get<CaptchaResultModel>({
+    url: Api.Captcha,
+    params,
+  });
 }
 
 /**

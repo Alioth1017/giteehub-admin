@@ -58,7 +58,7 @@
   import { useGlobSetting } from '/@/hooks/setting';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { localeStore } from '/@/store/modules/locale';
+  import { useLocaleStore } from '/@/store/modules/locale';
 
   export default defineComponent({
     name: 'Login',
@@ -76,6 +76,7 @@
       const globSetting = useGlobSetting();
       const { prefixCls } = useDesign('login');
       const { t } = useI18n();
+      const localeStore = useLocaleStore();
 
       return {
         t,
@@ -94,7 +95,7 @@
 
   html[data-theme='dark'] {
     .@{prefix-cls} {
-      background: @dark-bg;
+      background-color: @dark-bg;
 
       &::before {
         background-image: url(/@/assets/svg/login-bg-dark.svg);
@@ -122,10 +123,10 @@
   .@{prefix-cls} {
     overflow: hidden;
     @media (max-width: @screen-xl) {
-      background: #293146;
+      background-color: #293146;
 
       .@{prefix-cls}-form {
-        background: #fff;
+        background-color: #fff;
       }
     }
 

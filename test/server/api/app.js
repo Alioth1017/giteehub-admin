@@ -15,14 +15,14 @@ router.get('/getTest', (ctx) => {
 
 router.post('/login', (ctx) => {
   ctx.body = {
-    code: 200,
+    code: 0,
     success: true,
     result: {
       userId: '1',
-      username: 'admin',
-      realName: 'Admin',
+      username: 'vben',
+      realName: 'Vben Admin',
       desc: 'manager',
-      password: 'admin',
+      password: '123456',
       token: 'fakeToken1',
       roles: [
         {
@@ -36,14 +36,14 @@ router.post('/login', (ctx) => {
 
 router.get('/getUserInfoById', (ctx) => {
   ctx.body = {
-    code: 200,
+    code: 0,
     success: true,
     result: {
       userId: '1',
-      username: 'admin',
-      realName: 'Admin',
+      username: 'vben',
+      realName: 'Vben Admin',
       desc: 'manager',
-      password: 'admin',
+      password: '123456',
       token: 'fakeToken1',
       roles: [
         {

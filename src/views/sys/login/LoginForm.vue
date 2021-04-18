@@ -12,6 +12,19 @@
         :placeholder="t('sys.login.password')"
       />
     </FormItem>
+    <FormItem name="verifyCode" class="enter-x captcha">
+      <Input v-model:value="formData.verifyCode" :maxlength="4" />
+      <Captcha
+        :ref="setRefs('captcha')"
+        v-model="formData.captchaId"
+        class="value"
+        @change="
+          () => {
+            formData.verifyCode = '';
+          }
+        "
+      />
+    </FormItem>
 
     <ARow class="enter-x">
       <ACol :span="12">
@@ -25,9 +38,9 @@
       <ACol :span="12">
         <FormItem :style="{ 'text-align': 'right' }">
           <!-- No logic, you need to deal with it yourself -->
-          <Button type="link" size="small" @click="setLoginState(LoginStateEnum.RESET_PASSWORD)">
+          <!-- <Button type="link" size="small" @click="setLoginState(LoginStateEnum.RESET_PASSWORD)">
             {{ t('sys.login.forgetPassword') }}
-          </Button>
+          </Button> -->
         </FormItem>
       </ACol>
     </ARow>
@@ -40,7 +53,7 @@
         {{ t('sys.login.registerButton') }}
       </Button> -->
     </FormItem>
-    <ARow class="enter-x">
+    <!-- <ARow class="enter-x">
       <ACol :xs="24" :md="8">
         <Button block @click="setLoginState(LoginStateEnum.MOBILE)">
           {{ t('sys.login.mobileSignInFormTitle') }}
@@ -56,40 +69,41 @@
           {{ t('sys.login.registerButton') }}
         </Button>
       </ACol>
-    </ARow>
+    </ARow> -->
 
-    <Divider class="enter-x">{{ t('sys.login.otherSignIn') }}</Divider>
+    <!-- <Divider class="enter-x">{{ t('sys.login.otherSignIn') }}</Divider> -->
 
-    <div class="flex justify-evenly enter-x" :class="`${prefixCls}-sign-in-way`">
+    <!-- <div class="flex justify-evenly enter-x" :class="`${prefixCls}-sign-in-way`">
       <GithubFilled />
       <WechatFilled />
       <AlipayCircleFilled />
       <GoogleCircleFilled />
       <TwitterCircleFilled />
-    </div>
+    </div> -->
   </Form>
 </template>
 <script lang="ts">
   import { defineComponent, reactive, ref, toRaw, unref, computed } from 'vue';
 
-  import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'ant-design-vue';
-  import {
-    GithubFilled,
-    WechatFilled,
-    AlipayCircleFilled,
-    GoogleCircleFilled,
-    TwitterCircleFilled,
-  } from '@ant-design/icons-vue';
+  import { Checkbox, Form, Input, Row, Col, Button } from 'ant-design-vue';
+  // import {
+  //   GithubFilled,
+  //   WechatFilled,
+  //   AlipayCircleFilled,
+  //   GoogleCircleFilled,
+  //   TwitterCircleFilled,
+  // } from '@ant-design/icons-vue';
   import LoginFormTitle from './LoginFormTitle.vue';
 
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { useRefs } from '/@/hooks/core/useRefs';
 
-  import { userStore } from '/@/store/modules/user';
+  import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { useKeyPress } from '/@/hooks/event/useKeyPress';
-  import { KeyCodeEnum } from '/@/enums/keyCodeEnum';
+  import { onKeyStroke } from '@vueuse/core';
+  import Captcha from './Captcha.vue';
 
   export default defineComponent({
     name: 'LoginForm',
@@ -101,19 +115,22 @@
       Form,
       FormItem: Form.Item,
       Input,
-      Divider,
+      // Divider,
       LoginFormTitle,
       InputPassword: Input.Password,
-      GithubFilled,
-      WechatFilled,
-      AlipayCircleFilled,
-      GoogleCircleFilled,
-      TwitterCircleFilled,
+      // GithubFilled,
+      // WechatFilled,
+      // AlipayCircleFilled,
+      // GoogleCircleFilled,
+      // TwitterCircleFilled,
+      Captcha,
     },
     setup() {
       const { t } = useI18n();
+      const [refs, setRefs] = useRefs();
       const { notification } = useMessage();
       const { prefixCls } = useDesign('login');
+      const userStore = useUserStore();
 
       const { setLoginState, getLoginState } = useLoginState();
       const { getFormRules } = useFormRules();
@@ -124,17 +141,14 @@
 
       const formData = reactive({
         account: 'admin',
-        password: 'admin',
+        password: '123456',
+        captchaId: '',
+        verifyCode: '',
       });
 
       const { validForm } = useFormValid(formRef);
-      useKeyPress(['enter'], (events) => {
-        const keyCode = events.keyCode;
 
-        if (keyCode === KeyCodeEnum.ENTER) {
-          handleLogin();
-        }
-      });
+      onKeyStroke('Enter', handleLogin);
 
       const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN);
 
@@ -147,6 +161,8 @@
             toRaw({
               password: data.password,
               username: data.account,
+              captchaId: formData.captchaId,
+              verifyCode: data.verifyCode,
             })
           );
           if (userInfo) {
@@ -155,7 +171,9 @@
               description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
               duration: 3,
             });
+            return;
           }
+          refs.value.captcha.refresh();
         } finally {
           loading.value = false;
         }
@@ -163,6 +181,8 @@
 
       return {
         t,
+        refs,
+        setRefs,
         prefixCls,
         formRef,
         formData,
@@ -177,3 +197,11 @@
     },
   });
 </script>
+
+<style lang="less">
+  .captcha .value {
+    position: absolute;
+    top: -6px;
+    right: 0;
+  }
+</style>
