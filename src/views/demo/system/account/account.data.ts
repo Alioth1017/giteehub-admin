@@ -4,13 +4,18 @@ import { FormSchema } from '/@/components/Table';
 
 export const columns: BasicColumn[] = [
   {
+    title: '姓名',
+    dataIndex: 'name',
+    width: 120,
+  },
+  {
     title: '用户名',
-    dataIndex: 'account',
+    dataIndex: 'username',
     width: 120,
   },
   {
     title: '昵称',
-    dataIndex: 'nickname',
+    dataIndex: 'nickName',
     width: 120,
   },
   {
@@ -25,18 +30,25 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '角色',
-    dataIndex: 'role',
+    dataIndex: 'roleName',
     width: 200,
   },
   {
     title: '备注',
     dataIndex: 'remark',
   },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    customRender({ record }) {
+      return record.status === 1 ? '启用' : '禁用';
+    },
+  },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'account',
+    field: 'username',
     label: '用户名',
     component: 'Input',
     colProps: { span: 8 },
@@ -51,13 +63,19 @@ export const searchFormSchema: FormSchema[] = [
 
 export const accountFormSchema: FormSchema[] = [
   {
-    field: 'account',
+    field: 'name',
+    label: '姓名',
+    component: 'Input',
+    required: true,
+  },
+  {
+    field: 'username',
     label: '用户名',
     component: 'Input',
     required: true,
   },
   {
-    field: 'pwd',
+    field: 'password',
     label: '密码',
     component: 'InputPassword',
     required: true,
@@ -65,22 +83,23 @@ export const accountFormSchema: FormSchema[] = [
   },
   {
     label: '角色',
-    field: 'role',
+    field: 'roleIdList',
     component: 'ApiSelect',
     componentProps: {
       api: getAllRoleList,
-      labelField: 'roleName',
-      valueField: 'roleValue',
+      labelField: 'name',
+      valueField: 'id',
+      mode: 'multiple',
     },
     required: true,
   },
   {
-    field: 'dept',
+    field: 'departmentId',
     label: '所属部门',
     component: 'TreeSelect',
     componentProps: {
       replaceFields: {
-        title: 'deptName',
+        title: 'name',
         key: 'id',
         value: 'id',
       },

@@ -6,7 +6,7 @@
       search
       :clickRowToExpand="false"
       :treeData="treeData"
-      :replaceFields="{ key: 'id', title: 'deptName' }"
+      :replaceFields="{ key: 'id', title: 'name' }"
       @select="handleSelect"
     />
   </div>
@@ -16,6 +16,7 @@
 
   import { BasicTree, TreeItem } from '/@/components/Tree';
   import { getDeptList } from '/@/api/demo/system';
+  import { deepTree } from '/@/utils/helper/treeHelper';
 
   export default defineComponent({
     name: 'DeptTree',
@@ -26,7 +27,7 @@
       const treeData = ref<TreeItem[]>([]);
 
       async function fetch() {
-        treeData.value = ((await getDeptList()) as unknown) as TreeItem[];
+        treeData.value = deepTree((await getDeptList()) as unknown) as TreeItem[];
       }
 
       function handleSelect(keys: string, e) {

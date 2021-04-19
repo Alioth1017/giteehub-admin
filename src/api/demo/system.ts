@@ -13,18 +13,18 @@ import {
 import { defHttp } from '/@/utils/http/axios';
 
 enum Api {
-  AccountList = '/system/getAccountList',
+  AccountList = '/admin/base/sys/user/page',
   DeptList = '/admin/base/sys/department/list',
   DeptAdd = '/admin/base/sys/department/add',
   DeptUpdate = '/admin/base/sys/department/update',
   DeptDelete = '/admin/base/sys/department/delete',
   MenuList = '/system/getMenuList',
   RolePageList = '/system/getRoleListByPage',
-  GetAllRoleList = '/system/getAllRoleList',
+  GetAllRoleList = '/admin/base/sys/role/list',
 }
 
 export const getAccountList = (params: AccountParams) =>
-  defHttp.get<AccountListGetResultModel>({ url: Api.AccountList, params });
+  defHttp.post<AccountListGetResultModel>({ url: Api.AccountList, params });
 
 export const getDeptList = (params?: DeptListItem) =>
   defHttp.post<DeptListGetResultModel>({ url: Api.DeptList, params });
@@ -45,4 +45,4 @@ export const getRoleListByPage = (params?: RolePageParams) =>
   defHttp.get<RolePageListGetResultModel>({ url: Api.RolePageList, params });
 
 export const getAllRoleList = (params?: RoleParams) =>
-  defHttp.get<RoleListGetResultModel>({ url: Api.GetAllRoleList, params });
+  defHttp.post<RoleListGetResultModel>({ url: Api.GetAllRoleList, params });

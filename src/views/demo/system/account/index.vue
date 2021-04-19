@@ -48,6 +48,17 @@
       const [registerTable, { reload }] = useTable({
         title: '账号列表',
         api: getAccountList,
+        fetchSetting: {
+          pageField: 'page',
+          sizeField: 'size',
+          listField: 'list',
+          totalField: 'pagination.total',
+        },
+        beforeFetch: (p) => {
+          p.order = 'createTime';
+          p.sort = 'desc';
+          return p;
+        },
         columns,
         formConfig: {
           labelWidth: 120,

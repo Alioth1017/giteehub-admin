@@ -49,13 +49,13 @@
           return deepTree(d);
         },
         columns,
-        // useSearchForm: true,
         formConfig: {
           labelWidth: 120,
           schemas: searchFormSchema,
         },
         pagination: false,
         striped: false,
+        // useSearchForm: true,
         showTableSetting: true,
         bordered: true,
         showIndexColumn: false,
